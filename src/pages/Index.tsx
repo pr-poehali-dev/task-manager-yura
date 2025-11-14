@@ -5,6 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 
 interface Task {
   id: string;
@@ -22,16 +28,45 @@ interface Notification {
   time: string;
 }
 
+interface Project {
+  id: string;
+  name: string;
+  color: string;
+  taskCount: number;
+}
+
 const Index = () => {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
+  const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
   
-  const [tasks] = useState<Task[]>([
+  const [tasks, setTasks] = useState<Task[]>([
     { id: '1', title: 'Разработать API эндпоинты', status: 'in-progress', priority: 'high', dueDate: '2025-11-16', project: 'Backend v2.0' },
     { id: '2', title: 'Дизайн главной страницы', status: 'todo', priority: 'medium', dueDate: '2025-11-18', project: 'Redesign' },
     { id: '3', title: 'Настроить CI/CD', status: 'done', priority: 'high', dueDate: '2025-11-14', project: 'DevOps' },
     { id: '4', title: 'Тестирование UI компонентов', status: 'in-progress', priority: 'medium', dueDate: '2025-11-17', project: 'Frontend' },
     { id: '5', title: 'Оптимизация базы данных', status: 'todo', priority: 'low', dueDate: '2025-11-20', project: 'Backend v2.0' },
   ]);
+  
+  const [projects, setProjects] = useState<Project[]>([
+    { id: '1', name: 'Backend v2.0', color: 'primary', taskCount: 2 },
+    { id: '2', name: 'Frontend', color: 'secondary', taskCount: 1 },
+    { id: '3', name: 'DevOps', color: 'accent', taskCount: 1 },
+  ]);
+  
+  const [newTask, setNewTask] = useState({
+    title: '',
+    status: 'todo' as const,
+    priority: 'medium' as const,
+    dueDate: '',
+    project: '',
+  });
+  
+  const [newProject, setNewProject] = useState({
+    name: '',
+    color: 'primary',
+  });
 
   const [notifications] = useState<Notification[]>([
     { id: '1', type: 'deadline', message: 'Дедлайн "Разработать API" через 2 дня', time: '10 мин назад' },
@@ -62,6 +97,58 @@ const Index = () => {
       case 'in-progress': return 'bg-secondary/20 text-secondary border-secondary/50';
       default: return 'bg-muted/20 text-muted-foreground border-muted';
     }
+  };
+  
+  const handleCreateTask = () => {
+    if (!newTask.title || !newTask.dueDate || !newTask.project) {
+      toast({
+        title: 'Ошибка',
+        description: 'Заполните все обязательные поля',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    const task: Task = {
+      id: Date.now().toString(),
+      ...newTask,
+    };
+    
+    setTasks([...tasks, task]);
+    setIsTaskDialogOpen(false);
+    setNewTask({ title: '', status: 'todo', priority: 'medium', dueDate: '', project: '' });
+    
+    toast({
+      title: 'Задача создана',
+      description: `"${task.title}" добавлена в проект ${task.project}`,
+    });
+  };
+  
+  const handleCreateProject = () => {
+    if (!newProject.name) {
+      toast({
+        title: 'Ошибка',
+        description: 'Введите название проекта',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    const project: Project = {
+      id: Date.now().toString(),
+      name: newProject.name,
+      color: newProject.color,
+      taskCount: 0,
+    };
+    
+    setProjects([...projects, project]);
+    setIsProjectDialogOpen(false);
+    setNewProject({ name: '', color: 'primary' });
+    
+    toast({
+      title: 'Проект создан',
+      description: `Проект "${project.name}" готов к работе`,
+    });
   };
 
   return (
@@ -118,10 +205,96 @@ const Index = () => {
                   <h2 className="text-3xl font-bold tracking-tight">Дашборд</h2>
                   <p className="text-muted-foreground mt-1">Обзор ваших задач и проектов</p>
                 </div>
-                <Button className="neon-glow">
-                  <Icon name="Plus" size={16} className="mr-2" />
-                  Новая задача
-                </Button>
+                <Dialog open={isTaskDialogOpen} onOpenChange={setIsTaskDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="neon-glow">
+                      <Icon name="Plus" size={16} className="mr-2" />
+                      Новая задача
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="cyber-border bg-card">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl neon-text">Создать задачу</DialogTitle>
+                      <DialogDescription className="font-mono">
+                        Добавьте новую задачу в систему
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 mt-4">
+                      <div>
+                        <Label htmlFor="task-title" className="font-mono">Название задачи</Label>
+                        <Input
+                          id="task-title"
+                          value={newTask.title}
+                          onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                          placeholder="Введите название задачи"
+                          className="mt-2 cyber-border"
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="task-status" className="font-mono">Статус</Label>
+                          <Select value={newTask.status} onValueChange={(v: any) => setNewTask({ ...newTask, status: v })}>
+                            <SelectTrigger className="mt-2 cyber-border">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="todo">К выполнению</SelectItem>
+                              <SelectItem value="in-progress">В процессе</SelectItem>
+                              <SelectItem value="done">Завершено</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="task-priority" className="font-mono">Приоритет</Label>
+                          <Select value={newTask.priority} onValueChange={(v: any) => setNewTask({ ...newTask, priority: v })}>
+                            <SelectTrigger className="mt-2 cyber-border">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="low">Низкий</SelectItem>
+                              <SelectItem value="medium">Средний</SelectItem>
+                              <SelectItem value="high">Высокий</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="task-project" className="font-mono">Проект</Label>
+                          <Select value={newTask.project} onValueChange={(v) => setNewTask({ ...newTask, project: v })}>
+                            <SelectTrigger className="mt-2 cyber-border">
+                              <SelectValue placeholder="Выберите проект" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {projects.map(p => (
+                                <SelectItem key={p.id} value={p.name}>{p.name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="task-date" className="font-mono">Дедлайн</Label>
+                          <Input
+                            id="task-date"
+                            type="date"
+                            value={newTask.dueDate}
+                            onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+                            className="mt-2 cyber-border"
+                          />
+                        </div>
+                      </div>
+                      
+                      <Button onClick={handleCreateTask} className="w-full neon-glow mt-4">
+                        <Icon name="Plus" size={16} className="mr-2" />
+                        Создать задачу
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               <div className="grid grid-cols-3 gap-6">
@@ -300,7 +473,99 @@ const Index = () => {
             </div>
           )}
 
-          {['projects', 'calendar', 'analytics', 'settings'].includes(activeTab) && (
+          {activeTab === 'projects' && (
+            <div className="space-y-6 animate-slide-up">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-3xl font-bold tracking-tight">Проекты</h2>
+                  <p className="text-muted-foreground mt-1">Управление вашими проектами</p>
+                </div>
+                <Dialog open={isProjectDialogOpen} onOpenChange={setIsProjectDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="neon-glow">
+                      <Icon name="FolderPlus" size={16} className="mr-2" />
+                      Новый проект
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="cyber-border bg-card">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl neon-text">Создать проект</DialogTitle>
+                      <DialogDescription className="font-mono">
+                        Добавьте новый проект для организации задач
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 mt-4">
+                      <div>
+                        <Label htmlFor="project-name" className="font-mono">Название проекта</Label>
+                        <Input
+                          id="project-name"
+                          value={newProject.name}
+                          onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
+                          placeholder="Введите название проекта"
+                          className="mt-2 cyber-border"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="project-color" className="font-mono">Цветовая метка</Label>
+                        <Select value={newProject.color} onValueChange={(v) => setNewProject({ ...newProject, color: v })}>
+                          <SelectTrigger className="mt-2 cyber-border">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="primary">Циан</SelectItem>
+                            <SelectItem value="secondary">Фиолетовый</SelectItem>
+                            <SelectItem value="accent">Розовый</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <Button onClick={handleCreateProject} className="w-full neon-glow mt-4">
+                        <Icon name="Plus" size={16} className="mr-2" />
+                        Создать проект
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-6">
+                {projects.map((project) => (
+                  <Card key={project.id} className="p-6 cyber-border hover:neon-glow transition-all cursor-pointer">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={`w-12 h-12 rounded-lg bg-${project.color}/20 flex items-center justify-center`}>
+                        <Icon name="FolderKanban" size={24} className={`text-${project.color}`} />
+                      </div>
+                      <Badge variant="outline" className="font-mono">
+                        {tasks.filter(t => t.project === project.name).length} задач
+                      </Badge>
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">{project.name}</h3>
+                    <div className="space-y-2 mt-4">
+                      <div className="flex justify-between text-xs font-mono">
+                        <span className="text-muted-foreground">Прогресс</span>
+                        <span className="text-primary">
+                          {tasks.filter(t => t.project === project.name && t.status === 'done').length}/
+                          {tasks.filter(t => t.project === project.name).length}
+                        </span>
+                      </div>
+                      <Progress 
+                        value={
+                          tasks.filter(t => t.project === project.name).length > 0
+                            ? (tasks.filter(t => t.project === project.name && t.status === 'done').length / 
+                               tasks.filter(t => t.project === project.name).length) * 100
+                            : 0
+                        } 
+                        className="h-1.5" 
+                      />
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {['calendar', 'analytics', 'settings'].includes(activeTab) && (
             <div className="flex items-center justify-center h-[60vh] animate-slide-up">
               <div className="text-center">
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
@@ -308,7 +573,6 @@ const Index = () => {
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Раздел в разработке</h3>
                 <p className="text-muted-foreground font-mono">
-                  {activeTab === 'projects' && 'Управление проектами скоро будет доступно'}
                   {activeTab === 'calendar' && 'Календарь дедлайнов в процессе разработки'}
                   {activeTab === 'analytics' && 'Детальная аналитика появится в следующей версии'}
                   {activeTab === 'settings' && 'Настройки системы будут добавлены'}
