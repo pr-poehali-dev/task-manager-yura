@@ -153,10 +153,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="flex">
-        <aside className="w-64 min-h-screen cyber-border border-r p-6 space-y-6">
+      <div className="flex flex-col md:flex-row">
+        <aside className="w-full md:w-64 min-h-screen cyber-border md:border-r p-4 md:p-6 space-y-4 md:space-y-6">
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold neon-text tracking-wider">CYBER TASKS</h1>
+            <h1 className="text-xl md:text-2xl font-bold neon-text tracking-wider">CYBER TASKS</h1>
             <p className="text-xs text-muted-foreground font-mono">v2.077</p>
           </div>
 
@@ -172,20 +172,20 @@ const Index = () => {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                className={`w-full flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-lg transition-all ${
                   activeTab === item.id
                     ? 'bg-primary text-primary-foreground neon-glow'
                     : 'hover:bg-muted text-muted-foreground'
                 }`}
               >
-                <Icon name={item.icon as any} size={20} />
-                <span className="font-medium">{item.label}</span>
+                <Icon name={item.icon as any} size={18} />
+                <span className="text-sm md:text-base font-medium">{item.label}</span>
               </button>
             ))}
           </nav>
 
-          <div className="pt-6 border-t border-border">
-            <div className="flex items-center gap-3 px-4">
+          <div className="pt-4 md:pt-6 border-t border-border">
+            <div className="flex items-center gap-3 px-2 md:px-4">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center neon-glow">
                 <span className="text-sm font-bold">UN</span>
               </div>
@@ -197,17 +197,17 @@ const Index = () => {
           </div>
         </aside>
 
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 md:p-6 lg:p-8">
           {activeTab === 'dashboard' && (
             <div className="space-y-6 animate-slide-up">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-3xl font-bold tracking-tight">Дашборд</h2>
-                  <p className="text-muted-foreground mt-1">Обзор ваших задач и проектов</p>
+                  <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Дашборд</h2>
+                  <p className="text-sm md:text-base text-muted-foreground mt-1">Обзор ваших задач и проектов</p>
                 </div>
                 <Dialog open={isTaskDialogOpen} onOpenChange={setIsTaskDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button className="neon-glow">
+                    <Button className="neon-glow w-full sm:w-auto">
                       <Icon name="Plus" size={16} className="mr-2" />
                       Новая задача
                     </Button>
@@ -302,7 +302,7 @@ const Index = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground font-mono">К ВЫПОЛНЕНИЮ</p>
-                      <p className="text-4xl font-bold mt-2 neon-text">{statusCount.todo}</p>
+                      <p className="text-3xl md:text-4xl font-bold mt-2 neon-text">{statusCount.todo}</p>
                     </div>
                     <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
                       <Icon name="Circle" size={24} className="text-muted-foreground" />
@@ -314,7 +314,7 @@ const Index = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground font-mono">В ПРОЦЕССЕ</p>
-                      <p className="text-4xl font-bold mt-2 text-secondary">{statusCount['in-progress']}</p>
+                      <p className="text-3xl md:text-4xl font-bold mt-2 text-secondary">{statusCount['in-progress']}</p>
                     </div>
                     <div className="w-12 h-12 rounded-lg bg-secondary/20 flex items-center justify-center">
                       <Icon name="Loader" size={24} className="text-secondary" />
@@ -326,7 +326,7 @@ const Index = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground font-mono">ЗАВЕРШЕНО</p>
-                      <p className="text-4xl font-bold mt-2 text-primary">{statusCount.done}</p>
+                      <p className="text-3xl md:text-4xl font-bold mt-2 text-primary">{statusCount.done}</p>
                     </div>
                     <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center">
                       <Icon name="CheckCircle2" size={24} className="text-primary" />
@@ -335,7 +335,7 @@ const Index = () => {
                 </Card>
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                 <Card className="p-6 cyber-border">
                   <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                     <Icon name="TrendingUp" size={20} className="text-primary" />
@@ -349,17 +349,17 @@ const Index = () => {
                       </div>
                       <Progress value={completionRate} className="h-2" />
                     </div>
-                    <div className="grid grid-cols-3 gap-4 pt-4">
+                    <div className="grid grid-cols-3 gap-2 md:gap-4 pt-4">
                       <div className="text-center">
-                        <p className="text-2xl font-bold text-primary">{tasks.length}</p>
+                        <p className="text-xl md:text-2xl font-bold text-primary">{tasks.length}</p>
                         <p className="text-xs text-muted-foreground font-mono mt-1">Всего задач</p>
                       </div>
                       <div className="text-center border-x border-border">
-                        <p className="text-2xl font-bold text-secondary">{statusCount['in-progress']}</p>
+                        <p className="text-xl md:text-2xl font-bold text-secondary">{statusCount['in-progress']}</p>
                         <p className="text-xs text-muted-foreground font-mono mt-1">Активных</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-2xl font-bold text-accent">3</p>
+                        <p className="text-xl md:text-2xl font-bold text-accent">3</p>
                         <p className="text-xs text-muted-foreground font-mono mt-1">Проектов</p>
                       </div>
                     </div>
@@ -390,8 +390,8 @@ const Index = () => {
                 </Card>
               </div>
 
-              <Card className="p-6 cyber-border">
-                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Card className="p-4 md:p-6 cyber-border">
+                <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
                   <Icon name="Zap" size={20} className="text-primary" />
                   Активные задачи
                 </h3>
@@ -399,29 +399,29 @@ const Index = () => {
                   {tasks.filter(t => t.status !== 'done').slice(0, 4).map((task) => (
                     <div
                       key={task.id}
-                      className="flex items-center justify-between p-4 rounded-lg cyber-border hover:neon-glow transition-all group"
+                      className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 md:p-4 rounded-lg cyber-border hover:neon-glow transition-all group"
                     >
-                      <div className="flex items-center gap-4 flex-1">
+                      <div className="flex items-center gap-3 md:gap-4 flex-1">
                         <div className={`w-1 h-12 rounded-full ${
                           task.status === 'in-progress' ? 'bg-secondary' : 'bg-muted'
                         }`} />
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium">{task.title}</p>
-                          <div className="flex items-center gap-2 mt-1">
+                          <p className="text-sm md:text-base font-medium">{task.title}</p>
+                          <div className="flex flex-wrap items-center gap-2 mt-1">
                             <Badge variant="outline" className={`${getStatusColor(task.status)} font-mono text-xs`}>
                               {task.status === 'in-progress' ? 'В РАБОТЕ' : 'TODO'}
                             </Badge>
-                            <span className="text-xs text-muted-foreground">•</span>
+                            <span className="text-xs text-muted-foreground hidden sm:inline">•</span>
                             <span className="text-xs text-muted-foreground font-mono">{task.project}</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Badge className={getPriorityColor(task.priority)}>
+                      <div className="flex items-center justify-between sm:justify-end gap-3 ml-4 sm:ml-0">
+                        <Badge className={`${getPriorityColor(task.priority)} text-xs`}>
                           {task.priority === 'high' ? 'ВЫСОКИЙ' : task.priority === 'medium' ? 'СРЕДНИЙ' : 'НИЗКИЙ'}
                         </Badge>
                         <div className="text-right">
-                          <p className="text-sm font-mono text-muted-foreground">
+                          <p className="text-xs md:text-sm font-mono text-muted-foreground">
                             <Icon name="Calendar" size={14} className="inline mr-1" />
                             {new Date(task.dueDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
                           </p>
@@ -435,28 +435,28 @@ const Index = () => {
           )}
 
           {activeTab === 'tasks' && (
-            <div className="space-y-6 animate-slide-up">
-              <h2 className="text-3xl font-bold">Задачи</h2>
+            <div className="space-y-4 md:space-y-6 animate-slide-up">
+              <h2 className="text-2xl md:text-3xl font-bold">Задачи</h2>
               <Tabs defaultValue="kanban">
                 <TabsList>
                   <TabsTrigger value="kanban">Канбан</TabsTrigger>
                   <TabsTrigger value="list">Список</TabsTrigger>
                 </TabsList>
-                <TabsContent value="kanban" className="mt-6">
-                  <div className="grid grid-cols-3 gap-6">
+                <TabsContent value="kanban" className="mt-4 md:mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {(['todo', 'in-progress', 'done'] as const).map((status) => (
                       <Card key={status} className="p-4 cyber-border">
-                        <h3 className="font-semibold mb-4 flex items-center justify-between">
-                          <span className="font-mono">
+                        <h3 className="text-sm md:text-base font-semibold mb-4 flex items-center justify-between">
+                          <span className="font-mono text-xs md:text-sm">
                             {status === 'todo' ? 'К ВЫПОЛНЕНИЮ' : status === 'in-progress' ? 'В ПРОЦЕССЕ' : 'ГОТОВО'}
                           </span>
-                          <Badge variant="outline">{tasks.filter(t => t.status === status).length}</Badge>
+                          <Badge variant="outline" className="text-xs">{tasks.filter(t => t.status === status).length}</Badge>
                         </h3>
-                        <div className="space-y-3">
+                        <div className="space-y-2 md:space-y-3">
                           {tasks.filter(t => t.status === status).map((task) => (
-                            <Card key={task.id} className="p-4 cyber-border hover:neon-glow transition-all cursor-pointer">
-                              <p className="font-medium mb-2">{task.title}</p>
-                              <div className="flex items-center justify-between">
+                            <Card key={task.id} className="p-3 md:p-4 cyber-border hover:neon-glow transition-all cursor-pointer">
+                              <p className="text-sm md:text-base font-medium mb-2">{task.title}</p>
+                              <div className="flex items-center justify-between gap-2">
                                 <Badge className={`${getPriorityColor(task.priority)} text-xs`}>
                                   {task.priority}
                                 </Badge>
@@ -474,15 +474,15 @@ const Index = () => {
           )}
 
           {activeTab === 'projects' && (
-            <div className="space-y-6 animate-slide-up">
-              <div className="flex items-center justify-between">
+            <div className="space-y-4 md:space-y-6 animate-slide-up">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-3xl font-bold tracking-tight">Проекты</h2>
-                  <p className="text-muted-foreground mt-1">Управление вашими проектами</p>
+                  <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Проекты</h2>
+                  <p className="text-sm md:text-base text-muted-foreground mt-1">Управление вашими проектами</p>
                 </div>
                 <Dialog open={isProjectDialogOpen} onOpenChange={setIsProjectDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button className="neon-glow">
+                    <Button className="neon-glow w-full sm:w-auto">
                       <Icon name="FolderPlus" size={16} className="mr-2" />
                       Новый проект
                     </Button>
@@ -529,9 +529,9 @@ const Index = () => {
                 </Dialog>
               </div>
               
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {projects.map((project) => (
-                  <Card key={project.id} className="p-6 cyber-border hover:neon-glow transition-all cursor-pointer">
+                  <Card key={project.id} className="p-4 md:p-6 cyber-border hover:neon-glow transition-all cursor-pointer">
                     <div className="flex items-start justify-between mb-4">
                       <div className={`w-12 h-12 rounded-lg bg-${project.color}/20 flex items-center justify-center`}>
                         <Icon name="FolderKanban" size={24} className={`text-${project.color}`} />
@@ -540,7 +540,7 @@ const Index = () => {
                         {tasks.filter(t => t.project === project.name).length} задач
                       </Badge>
                     </div>
-                    <h3 className="text-xl font-bold mb-2">{project.name}</h3>
+                    <h3 className="text-lg md:text-xl font-bold mb-2">{project.name}</h3>
                     <div className="space-y-2 mt-4">
                       <div className="flex justify-between text-xs font-mono">
                         <span className="text-muted-foreground">Прогресс</span>
@@ -566,13 +566,13 @@ const Index = () => {
           )}
           
           {['calendar', 'analytics', 'settings'].includes(activeTab) && (
-            <div className="flex items-center justify-center h-[60vh] animate-slide-up">
+            <div className="flex items-center justify-center h-[50vh] md:h-[60vh] animate-slide-up px-4">
               <div className="text-center">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-                  <Icon name="Construction" size={32} className="text-muted-foreground" />
+                <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                  <Icon name="Construction" size={28} className="text-muted-foreground md:w-8 md:h-8" />
                 </div>
-                <h3 className="text-2xl font-bold mb-2">Раздел в разработке</h3>
-                <p className="text-muted-foreground font-mono">
+                <h3 className="text-xl md:text-2xl font-bold mb-2">Раздел в разработке</h3>
+                <p className="text-sm md:text-base text-muted-foreground font-mono">
                   {activeTab === 'calendar' && 'Календарь дедлайнов в процессе разработки'}
                   {activeTab === 'analytics' && 'Детальная аналитика появится в следующей версии'}
                   {activeTab === 'settings' && 'Настройки системы будут добавлены'}
